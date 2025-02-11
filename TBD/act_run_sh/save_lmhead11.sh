@@ -10,7 +10,7 @@ datasets=(
 )
 
 # sub_types=("unseen_domain_cmv" "unseen_domain_yelp" "unseen_domain_xsum" "unseen_domain_tldr" "unseen_domain_eli5" "unseen_domain_wp" "unseen_domain_roct" "unseen_domain_hswag" "unseen_domain_squad" "unseen_domain_sci_gen")
-sub_types=("unseen_domain_cmv unseen_domain_xsum unseen_domain_sci_gen")
+sub_types=("unseen_domain_cmv" "unseen_domain_xsum" "unseen_domain_sci_gen")
 
 use_types=("train" "test_ood")
 
@@ -22,15 +22,7 @@ for dataset in "${!datasets[@]}"; do
             for use_type in "${use_types[@]}"; do
                 echo "$dataset $datatype $sub_type $use_type" 
 
-                CUDA_VISIBLE_DEVICES=2 python /mnt/petrelfs/liuxinmin/Mgt_detect/util/generate_head_activations.py --model llama-2-7b  --dataset $dataset --datatype $datatype --device $device --sub_type $sub_type  --use_type $use_type
-
-                # python /mnt/petrelfs/liuxinmin/Mgt_detect/util/generate_head_activations.py --model llama-2-7b  --dataset $dataset --datatype $datatype --device $device --manual --use_type test
-
-                # CUDA_VISIBLE_DEVICES=$idx python generate_head_activations.py --dataset $dataset --datatype $datatype --token_pos -10 --device $device
-
-                # CUDA_VISIBLE_DEVICES=$idx python generate_head_activations.py --dataset $dataset --datatype $datatype --token_pos -20 --device $device --manual
-
-                # CUDA_VISIBLE_DEVICES=$idx python generate_head_activations.py --model llama-3-8b --dataset $dataset --datatype $datatype --device $device --manual
+                CUDA_VISIBLE_DEVICES=0 python /mnt/petrelfs/liuxinmin/Mgt_detect/util/generate_head_activations.py --split_num 0 --model llama-2-7b  --dataset $dataset --datatype $datatype --device $device --sub_type $sub_type  --use_type $use_type
             done
         done
     done

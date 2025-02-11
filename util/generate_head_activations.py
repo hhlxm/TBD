@@ -129,6 +129,7 @@ if __name__ == "__main__":
     parser.add_argument("--sub_type",default="", type = str)
     parser.add_argument("--use_type",default="" , choices = ['train','test','valid','test_ood'])
     parser.add_argument("--dec",action='store_true')
+    parser.add_argument("--split_num",type = int,default=-1)
     args = parser.parse_args()
 
     
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     tokenizer, model = load_model(args.device, model_tag=model_tag)
 
     loader = UnifiedDataLoader()
-    processed_data = loader.load_data(args.dataset, args.datatype, args.sub_type,args.use_type)
+    processed_data = loader.load_data(args.dataset, args.datatype, args.sub_type,args.use_type,args.split_num)
     processed_data = [item['text'] for item in processed_data]
     print(f"dataset:{args.dataset}_{args.datatype}  size:{len(processed_data)}")
 
@@ -162,38 +163,40 @@ if __name__ == "__main__":
     if args.dec:
         for idx in tqdm(range(int(len(processed_data)/args.ACTS_BATCH_SIZE), -1, -1), desc="Dec Processing batches"):
             idx=idx*args.ACTS_BATCH_SIZE ## 200 100 0
-            file_path = f"{save_dir}/{model_tag}_{idx}.pt"
-            file_path_manual = f"{save_dir_manual}/{model_tag}_{idx}.pt"
+            save_idx = idx + (args.split_num if args.split_num>=0 else 0)
+            file_path = f"{save_dir}/{model_tag}_{save_idx}.pt"
+            file_path_manual = f"{save_dir_manual}/{model_tag}_{save_idx}.pt"
             # if os.path.exists(file_path) and os.path.exists(file_path_manual):
             if os.path.exists(file_path) and os.path.exists(file_path_manual) :
                 print(f"文件已存在:\n{file_path}\n{file_path_manual}")
                 continue
             torch.cuda.empty_cache() 
             acts = get_acts(processed_data[idx:idx + int((args.ACTS_BATCH_SIZE))], tokenizer, model, args.device, args.max_word, args.token_pos) # (ACTS_BATCH_SIZE, token_pos, logits)
-            # acts2 = get_acts(processed_data[idx +int((args.ACTS_BATCH_SIZE)/2):idx + (args.ACTS_BATCH_SIZE)], tokenizer, model, args.device, args.max_word, args.token_pos) # (ACTS_BATCH_SIZE, token_pos, logits)
-            
-            # acts = torch.cat([acts1, acts2],dim=0) # (ACTS_BATCH_SIZE, token_pos, logits)
+
             print(acts.shape)
             
             if not os.path.exists(file_path):
                 ## 原始
                 torch.save(acts, file_path)
             
-            if not os.path.exists(file_path_manual):
-                indices = [common_tokens_dict[key][model_tag] for key in common_tokens_dict.keys()]
-                indices_tensor = torch.tensor(indices)
-                acts = acts[:,:,indices_tensor]
-                # print(acts.shape)
-                ## 裁剪
-                torch.save(acts, file_path_manual)
+            # if not os.path.exists(file_path_manual):
+            #     indices = [common_tokens_dict[key][model_tag] for key in common_tokens_dict.keys()]
+            #     indices_tensor = torch.tensor(indices)
+            #     acts = acts[:,:,indices_tensor]
+            #     # print(acts.shape)
+            #     ## 裁剪
+            #     torch.save(acts, file_path_manual)
             acts = []
+            
     else:
         # reduce the load of each file
         for idx in tqdm(range(0, len(processed_data), args.ACTS_BATCH_SIZE), desc="Processing batches"):
-            file_path = f"{save_dir}/{model_tag}_{idx}.pt"
-            file_path_manual = f"{save_dir_manual}/{model_tag}_{idx}.pt"
+            save_idx = idx + (args.split_num if args.split_num>=0 else 0)
+
+            file_path = f"{save_dir}/{model_tag}_{save_idx}.pt"
+            file_path_manual = f"{save_dir_manual}/{model_tag}_{save_idx}.pt"
             # if os.path.exists(file_path) and os.path.exists(file_path_manual):
-            if os.path.exists(file_path) and os.path.exists(file_path_manual) :
+            if os.path.exists(file_path) :
                 print(f"文件已存在:\n{file_path}\n{file_path_manual}")
                 continue
             torch.cuda.empty_cache() 
@@ -207,13 +210,13 @@ if __name__ == "__main__":
                 ## 原始
                 torch.save(acts, file_path)
             
-            if not os.path.exists(file_path_manual):
-                indices = [common_tokens_dict[key][model_tag] for key in common_tokens_dict.keys()]
-                indices_tensor = torch.tensor(indices)
-                acts = acts[:,:,indices_tensor]
-                # print(acts.shape)
-                ## 裁剪
-                torch.save(acts, file_path_manual)
+            # if not os.path.exists(file_path_manual):
+            #     indices = [common_tokens_dict[key][model_tag] for key in common_tokens_dict.keys()]
+            #     indices_tensor = torch.tensor(indices)
+            #     acts = acts[:,:,indices_tensor]
+            #     # print(acts.shape)
+            #     ## 裁剪
+            #     torch.save(acts, file_path_manual)
             acts = []
         
 

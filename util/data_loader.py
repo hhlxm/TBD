@@ -10,7 +10,7 @@ class UnifiedDataLoader:
         self.magedir="/mnt/petrelfs/liuxinmin/Mgt_detect/data"
         self.datadir="/mnt/hwfile/trustai/zhangjie1/tbd/data"
 
-    def load_data(self, dataset_name: str, data_type: str, sub_type: str = "",use_type: str = "test") -> List[Dict[str, Union[str, List[str]]]]:
+    def load_data(self, dataset_name: str, data_type: str, sub_type: str = "",use_type: str = "test",split_num=-1) -> List[Dict[str, Union[str, List[str]]]]:
         if dataset_name not in self.supported_datasets:
             raise ValueError(f"Unsupported dataset: {dataset_name}")
 
@@ -31,29 +31,43 @@ class UnifiedDataLoader:
         elif dataset_name == "m4m":
             return self._load_m4m(data_type)
         elif dataset_name == "mage":
-            return self._load_mage(data_type,sub_type,use_type)
+            return self._load_mage(data_type,sub_type,use_type,split_num)
         
         
-    def _load_mage(self, data_type: str,sub_type: str,use_type: str ) -> List[Dict[str, Union[str, List[str]]]]:        
+    def _load_mage(self, data_type: str,sub_type: str,use_type: str ,split_num=-1) -> List[Dict[str, Union[str, List[str]]]]:        
         valid_types = ['cross_domains_cross_models', 'cross_domains_model_specific', 'domain_specific_cross_models', 'domain_specific_model_specific','unseen_domains','unseen_models']
         if data_type not in valid_types:
             raise ValueError(f"Invalid data type for MAGE. Valid types are: {', '.join(valid_types)}")
 
         processed_data = []        
-            
+        
+        if split_num==-1:
+            if data_type == 'cross_domains_cross_models':
+                file_paths = [f'{self.magedir}/mage/{data_type}/{use_type}.csv']
+            else:
+                file_paths = [f'{self.magedir}/mage/{data_type}/{sub_type}/{use_type}.csv']
 
-        if data_type == 'cross_domains_cross_models':
-            file_paths = [f'{self.magedir}/mage/{data_type}/{use_type}.csv']
-        else:
-            file_paths = [f'{self.magedir}/mage/{data_type}/{sub_type}/{use_type}.csv']
+            for file_path in file_paths:
+                df = pd.read_csv(file_path)
+                
+                processed_data.extend([
+                    {'text': f"{row['text']}", 'label': int(f"{row['label']}") }
+                    for _, row in df.iterrows()
+                ])
+        else:            
 
-        for file_path in file_paths:
-            df = pd.read_csv(file_path)
-            
-            processed_data.extend([
-                {'text': f"{row['text']}", 'label': int(f"{row['label']}") }
-                for _, row in df.iterrows()
-            ])
+            if data_type == 'cross_domains_cross_models':
+                file_paths = [f'{self.magedir}/mage/{data_type}/{use_type}_{split_num}.csv']
+            else:
+                file_paths = [f'{self.magedir}/mage/{data_type}/{sub_type}/{use_type}_{split_num}.csv']
+
+            for file_path in file_paths:
+                df = pd.read_csv(file_path)
+                
+                processed_data.extend([
+                    {'text': f"{row['text']}", 'label': int(f"{row['label']}") }
+                    for _, row in df.iterrows()
+                ])
 
         return check_data(processed_data)
     

@@ -8,14 +8,14 @@
 # nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead5.sh > ~/Mgt_detect/act_save_log/log5.log 2>&1 &
 
 #----------------------MAGE----------------------#
-nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead6.sh > ~/Mgt_detect/act_save_log/log6.log 2>&1 &
-nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead11.sh > ~/Mgt_detect/act_save_log/log11.log 2>&1 &
-nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead12.sh > ~/Mgt_detect/act_save_log/log12.log 2>&1 &
+# nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead6.sh > ~/Mgt_detect/act_save_log/log6.log 2>&1 &
+# nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead11.sh > ~/Mgt_detect/act_save_log/log11.log 2>&1 &
+# nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead12.sh > ~/Mgt_detect/act_save_log/log12.log 2>&1 &
 
 #-------------------DEC---------------------#
-nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead6_dec.sh > ~/Mgt_detect/act_save_log/log6_dec.log 2>&1 &
+# nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead6_dec.sh > ~/Mgt_detect/act_save_log/log6_dec.log 2>&1 &
 nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead11_dec.sh > ~/Mgt_detect/act_save_log/log11_dec.log 2>&1 &
-nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead12_dec.sh > ~/Mgt_detect/act_save_log/log12_dec.log 2>&1 &
+# nohup  bash ~/Mgt_detect/TBD/act_run_sh/save_lmhead12_dec.sh > ~/Mgt_detect/act_save_log/log12_dec.log 2>&1 &
 
 
 

@@ -19,7 +19,7 @@ for dataset in "${!datasets[@]}"; do
         for use_type in "${use_types[@]}"; do
             echo "$dataset $datatype"
 
-            CUDA_VISIBLE_DEVICES=2 python /mnt/petrelfs/liuxinmin/Mgt_detect/util/generate_head_activations.py  --model llama-3-8b  --dataset $dataset --datatype $datatype --device $device --use_type $use_types --dec 
+            CUDA_VISIBLE_DEVICES=2 python /mnt/petrelfs/liuxinmin/Mgt_detect/util/generate_head_activations.py  --split_num 0 --model llama-2-7b  --dataset $dataset --datatype $datatype --device $device --use_type $use_types --dec 
 
         # python /mnt/petrelfs/liuxinmin/Mgt_detect/util/generate_head_activations.py --model llama-2-7b  --dataset $dataset --datatype $datatype --device $device --manual --use_type test
 

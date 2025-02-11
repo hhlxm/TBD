@@ -10,7 +10,7 @@ datasets=(
 )
 
 # sub_types=("unseen_model__7B" "unseen_model_bloom_7b" "unseen_model_flan_t5_small" "unseen_model_GLM130B" "unseen_model_gpt_j" "unseen_model_gpt-3.5-trubo" "unseen_model_opt_125m")
-sub_types=("unseen_model__7B unseen_model_gpt-3.5-trubo unseen_model_opt_125m")
+sub_types=("unseen_model__7B" "unseen_model_gpt-3.5-trubo" "unseen_model_opt_125m")
 
 use_types=("train test_ood")
 
@@ -21,7 +21,7 @@ for dataset in "${!datasets[@]}"; do
         for sub_type in "${sub_types[@]}"; do 
             for use_type in "${use_types[@]}"; do
                 echo "$dataset $datatype $sub_type $use_type" 
-                CUDA_VISIBLE_DEVICES=7 python /mnt/petrelfs/liuxinmin/Mgt_detect/util/generate_head_activations.py --model llama-2-7b  --dataset $dataset --datatype $datatype --device $device --sub_type $sub_type  --use_type $use_type --dec
+                CUDA_VISIBLE_DEVICES=7 python /mnt/petrelfs/liuxinmin/Mgt_detect/util/generate_head_activations.py --split_num 0  --model llama-2-7b  --dataset $dataset --datatype $datatype --device $device --sub_type $sub_type  --use_type $use_type --dec
             done
         done
     done
